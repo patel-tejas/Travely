@@ -1,3 +1,4 @@
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import React from 'react'
 
@@ -12,16 +13,21 @@ const Header = () => {
                         </Link>
                     </div>
 
-                    
+
 
                     <div className="flex items-center gap-4">
                         <div className="sm:flex sm:gap-4">
-                            <a
-                                className="rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow"
-                                href="#"
-                            >
-                                Login
-                            </a>
+                            <SignedIn>
+                                <UserButton />
+                            </SignedIn>
+                            <SignedOut>
+                                <Link
+                                    className="rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow"
+                                    href="/sign-in"
+                                >
+                                    Login
+                                </Link>
+                            </SignedOut>
                         </div>
 
                         <div className="block md:hidden">

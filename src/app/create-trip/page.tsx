@@ -7,32 +7,56 @@ import { SelectBudgetOption, SelectTravellerList } from '@/lib/options'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 import { chatSession } from '@/lib/AiModel'
-
+import { useSession, useUser } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
+import { BiLoaderAlt } from "react-icons/bi";
+import { createTrip } from '@/lib/action'
 
 const page = () => {
+  // const {user} = useUser();
+  const router = useRouter()
   const [place, setPlace] = useState<any>()
   const [formData, setFormData] = useState<any>([])
+  const [loading, setLoading] = useState<boolean>(false)
   const { toast } = useToast()
+  // const {session} = useSession()
 
+  const {user} = useUser();
+  // console.log(user);
+  
+  
   const handleInputChange = (name: string, value: any) => {
     setFormData({ ...formData, [name]: value })
 
   }
 
   const handleSubmit = async (e: any) => {
+    setLoading(true)
+    if (!user){
+      router.push("/sign-in")
+      setLoading(false)
+      return;
+    }
     if (!formData || !formData.destination || !formData.budget || !formData.people || !formData.days) {
       toast({
         title: "Failed to Generate",
         description: "Please fill all the fields",
       })
+      setLoading(false)
       return;
     }
     e.preventDefault()
-    const finalPrompt = `Generate a travel plan for location: ${formData.destination.label}, for ${formData.days} days for ${formData.people} with a ${formData.budget} Budget. Give me a hotels option list with hotel name, Hotel address, price, hotel image url, geo coordinates, rating, description, and suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket pricing, time travel each of the location for 3 days  with each day with best time to visit in JSON Format.`
+    const finalPrompt = `Generate a travel plan for location: ${formData.destination.label}, for ${formData.days} days for ${formData.people} with a ${formData.budget} Budget. Give me a hotels option list with hotel name, Hotel address, price, hotel image url, geo coordinates, rating, description, and suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket pricing, time travel each of the location for ${formData.days} days with each day with best time to visit in JSON Format. Make sure the to return Days in correct format like Day 1 and then Day 2 with their location images and itinerary.`
 
     const getTravelPlan = await chatSession.sendMessage(finalPrompt);
     const formattedRes= JSON.parse(getTravelPlan.response.text().replaceAll("```json", "").replaceAll("```", "") )   
-    console.log(formattedRes);
+    // console.log(formattedRes);
+    const tripId = await createTrip(user.id, formData, formattedRes);
+    console.log(tripId);
+
+    router.push(`/view-trip/${tripId}`)
+
+    setLoading(false)
   }
 
   return (
@@ -95,8 +119,13 @@ const page = () => {
         </div>
       </div>
       <div className='mt-10 flex items-center justify-center'>
-
-        <Button className={`w-full sm:w-1/5`} onClick={handleSubmit}>Generate Trip</Button>
+        
+        <Button className={`w-full sm:w-1/5`} onClick={handleSubmit}>
+        {
+          loading ? <BiLoaderAlt className='w-5 h-5 animate-spin'/> : 
+          "Generate Trip"
+        }
+        </Button>
       </div>
     </div>
   )
