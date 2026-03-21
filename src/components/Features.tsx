@@ -13,7 +13,7 @@ const Features = () => {
             <div className="text-center max-w-2xl mx-auto mb-20 text-slate-900">
                 <h2 className="text-orange-600 font-bold uppercase tracking-widest text-sm mb-3">Core Features</h2>
                 <h3 className="text-4xl md:text-5xl font-black mb-6 leading-tight">Everything you need for the perfect trip.</h3>
-                <p className="text-lg text-slate-500 font-medium leading-relaxed">From luxurious hand-picked accommodations to precise daily scheduling, TripGuruji eliminates the chaos of travel planning.</p>
+                <p className="text-lg text-slate-500 font-medium leading-relaxed">From luxurious hand-picked accommodations to precise daily scheduling, Travely AI eliminates the chaos of travel planning.</p>
             </div>
 
             {/* Feature 1: Hotels / Accommodations */}

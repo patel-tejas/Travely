@@ -16,7 +16,7 @@ const Footer = () => {
                 <div className="md:col-span-5 lg:col-span-4 flex flex-col items-start gap-6">
                     <Link className="flex items-center gap-2 text-white hover:text-orange-400 transition" href="/">
                         <span className="text-4xl drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]">🌅</span>
-                        <span className="text-3xl font-extrabold tracking-tight">TripGuruji</span>
+                        <span className="text-2xl font-black tracking-tighter text-white group-hover:text-orange-400 transition-colors">Travely AI</span>
                     </Link>
                     <p className="text-slate-400 font-medium leading-relaxed max-w-sm">
                         Stop stressing over planning. Let our advanced AI curate the perfect, hyper-personalized travel itinerary so you can focus on the adventure.
@@ -65,7 +65,7 @@ const Footer = () => {
 
             <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
                 <p className="text-slate-500 text-sm font-medium">
-                    &copy; {new Date().getFullYear()} TripGuruji. All rights reserved.
+                    &copy; {new Date().getFullYear()} Travely AI. All rights reserved.
                 </p>
                 <div className="flex gap-6 text-sm font-medium text-slate-500">
                     <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>

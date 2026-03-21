@@ -2,6 +2,7 @@
 
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
+import Image from 'next/image'
 import React, { useState, useEffect } from 'react'
 
 const Header = () => {
@@ -30,8 +31,8 @@ const Header = () => {
                     
                     <div className="flex items-center gap-2">
                         <Link className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition" href="/">
-                            <span className="drop-shadow-sm text-2xl">🌅</span>
-                            <span className="font-extrabold tracking-tight text-xl">TripGuruji</span>
+                            <Image src="/logo.png" alt="Travely AI Logo" width={32} height={32} className="rounded-lg shadow-sm" />
+                            <span className="font-extrabold tracking-tight text-xl">Travely AI</span>
                         </Link>
                     </div>
 
