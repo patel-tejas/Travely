@@ -1,11 +1,12 @@
-import Header from '@/components/Header'
+import Features from '@/components/Features'
 import Hero from '@/components/Hero'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>
+    <div className="bg-[#faf9f6]">
       <Hero />
+      <Features />
     </div>
   )
 }

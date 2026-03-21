@@ -1,33 +1,22 @@
 "use client"
-import React, { useEffect, useState } from 'react'
-import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
-import GooglePlacesAutocompleteProps from 'react-google-places-autocomplete/build/types'
-import { Input } from "@/components/ui/input"
+import React, { useState } from 'react'
 import { SelectBudgetOption, SelectTravellerList } from '@/lib/options'
-import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/ui/use-toast'
 import { chatSession } from '@/lib/AiModel'
-import { useSession, useUser } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { BiLoaderAlt } from "react-icons/bi";
 import { createTrip } from '@/lib/action'
 
-const page = () => {
-  // const {user} = useUser();
+const CreateTripPage = () => {
   const router = useRouter()
-  const [place, setPlace] = useState<any>()
-  const [formData, setFormData] = useState<any>([])
+  const [place, setPlace] = useState<string>("")
+  const [formData, setFormData] = useState<any>({})
   const [loading, setLoading] = useState<boolean>(false)
-  const { toast } = useToast()
-  // const {session} = useSession()
 
   const {user} = useUser();
-  // console.log(user);
-  
-  
+
   const handleInputChange = (name: string, value: any) => {
     setFormData({ ...formData, [name]: value })
-
   }
 
   const handleSubmit = async (e: any) => {
@@ -37,98 +26,152 @@ const page = () => {
       setLoading(false)
       return;
     }
-    if (!formData || !formData.destination || !formData.budget || !formData.people || !formData.days) {
-      toast({
-        title: "Failed to Generate",
-        description: "Please fill all the fields",
-      })
+    if (!place || !formData.budget || !formData.people || !formData.days) {
+      alert("Please fill all the fields")
       setLoading(false)
       return;
     }
     e.preventDefault()
-    const finalPrompt = `Generate a travel plan for location: ${formData.destination.label}, for ${formData.days} days for ${formData.people} with a ${formData.budget} Budget. Give me a hotels option list with hotel name, Hotel address, price, hotel image url, geo coordinates, rating, description, and suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket pricing, time travel each of the location for ${formData.days} days with each day with best time to visit in JSON Format. Make sure the to return Days in correct format like Day 1 and then Day 2 with their location images and itinerary.`
+    
+    const finalData = { ...formData, destination: { label: place, value: place } };
 
-    const getTravelPlan = await chatSession.sendMessage(finalPrompt);
-    const formattedRes= JSON.parse(getTravelPlan.response.text().replaceAll("```json", "").replaceAll("```", "") )   
-    // console.log(formattedRes);
-    const tripId = await createTrip(user.id, formData, formattedRes);
-    console.log(tripId);
+    const finalPrompt = `Generate a travel plan for location: ${place}, for ${formData.days} days for ${formData.people} with a ${formData.budget} Budget. Give me: 1. hotels option list with hotelName, hotelAddress, price, geoCoordinates, rating (numeric 1-5), description. 2. A detailed chronological hourly itinerary organized by day (Day 1, Day 2, etc). For each day, provide an array of places (activities) starting from morning to evening with: "time", "placeName", "placeDetails", "geoCoordinates", "ticketPricing", "timeTravel", and "rating" (numeric 1-5). 3. famousRestaurants array containing exactly 4 local street food and popular dining options matching the budget, with "placeName", "placeDetails", "geoCoordinates", "pricing", and "rating" (numeric 1-5). Very Important: For placeName, ONLY provide the exact, proper, official name of the location. Do NOT include descriptive text like "Dinner at" in the placeName. Return the entire response strictly in JSON Format.`
 
-    router.push(`/view-trip/${tripId}`)
-
+    try {
+        const getTravelPlan = await chatSession.sendMessage(finalPrompt);
+        const formattedRes= JSON.parse(getTravelPlan.response.text().replaceAll("```json", "").replaceAll("```", "") )   
+        
+        const tripId = await createTrip(user.id, finalData, formattedRes);
+        router.push(`/view-trip/${tripId}`)
+    } catch (err) {
+        console.error("AI Generation Error: ", err);
+    }
     setLoading(false)
   }
 
   return (
-    <div className='sm:px-10 md:px-32 lg:px-56 px-5 my-10'>
-      <h2 className='text-3xl font-bold'>Tell us your travel preferences</h2>
-      <p className='mt-3 text-gray-500 text-lg'>Just provide some basic information, our trip planner will do the rest</p>
+    <div className='min-h-screen bg-[#faf9f6] text-slate-900 selection:bg-orange-500/30 font-sans tracking-tight relative overflow-hidden flex flex-col items-center pb-24'>
+      
+      {/* Immersive Warm Background Elements */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1000px] h-[500px] bg-orange-400/10 blur-[120px] rounded-full pointer-events-none z-0" />
+      <div className="absolute top-[40%] right-[-10%] w-[600px] h-[600px] bg-rose-400/10 blur-[150px] rounded-full pointer-events-none z-0" />
 
-      <div className='mt-10 flex flex-col gap-10'>
-        <div>
-          <h2 className='text-xl my-3 font-semibold'>What is the destination? 🏕️🌴 </h2>
-          <GooglePlacesAutocomplete
-            apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
-            selectProps={{
-              value: place,
-              onChange: (value) => {
-                setPlace(value)
-                handleInputChange('destination', value)
-              }
-            }}
-          />
+      {/* Hero Section */}
+      <div className='relative z-10 w-full max-w-5xl px-6 pt-8 lg:pt-12 pb-16 text-center flex flex-col items-center'>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-orange-200 bg-white shadow-sm mb-8">
+            <span className="flex h-2.5 w-2.5 rounded-full bg-orange-500 animate-pulse"></span>
+            <span className="text-xs font-bold text-orange-600 uppercase tracking-widest">Tailored For You</span>
         </div>
-
-        <div className='flex flex-col gap-1'>
-          <h2 className='text-lg font-semibold'>How many days are you planning to go?</h2>
-          <Input type="number" placeholder="Ex: 3" className='focus:outline-none ' min={1} max={7} required onChange={(e) => handleInputChange('days', e.target.value)} />
-        </div>
-
-        <div className='flex flex-col gap-3'>
-          <h2 className='text-lg font-semibold'>What is Your Budget?</h2>
-          <div className='grid grid-cols-2 sm:grid-cols-3 gap-5 w-full'>
-            {
-              SelectBudgetOption.map((option) => (
-                <div key={option.id} className={`flex flex-col p-4 border rounded-lg hover:shadow-lg duration-200 cursor-pointer ${formData.budget === option.title && 'bg-green-100 shadow-lg border border-gray-600'}`} onClick={() => {
-                  handleInputChange('budget', option.title)
-                }}>
-                  <h2 className='text-3xl'>{option.icon}</h2>
-                  <h2 className='text-lg font-bold'>{option.title}</h2>
-                  <h2 className='text-sm text-gray-500'>{option.desc}</h2>
-                </div>
-              ))
-            }
-          </div>
-        </div>
-
-
-        <div className='flex flex-col gap-3'>
-          <h2 className='text-lg font-semibold'>Whom are travelling with?</h2>
-          <div className='grid grid-cols-2 sm:grid-cols-3 gap-5 w-full'>
-            {
-              SelectTravellerList.map((option) => (
-                <div key={option.id} className={`flex flex-col p-4 border rounded-lg hover:shadow-lg duration-200 cursor-pointer ${formData.people === option.title && 'bg-blue-100 shadow-lg border border-gray-600'}`}
-                  onClick={() => handleInputChange('people', option.title)}>
-                  <h2 className='text-3xl'>{option.icon}</h2>
-                  <h2 className='text-lg font-bold'>{option.title}</h2>
-                  <h2 className='text-sm text-gray-500'>{option.people}</h2>
-                </div>
-              ))
-            }
-          </div>
-        </div>
+        <h1 className='text-5xl md:text-7xl font-extrabold mb-6 text-slate-900 leading-[1.1] tracking-tight'>
+          Design Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500">Escape.</span>
+        </h1>
+        <p className='text-lg md:text-xl text-slate-500 max-w-2xl font-medium'>
+          Input your travel desires. Our intelligent engine curates the perfect, personalized itinerary instantly.
+        </p>
       </div>
-      <div className='mt-10 flex items-center justify-center'>
-        
-        <Button className={`w-full sm:w-1/5`} onClick={handleSubmit}>
-        {
-          loading ? <BiLoaderAlt className='w-5 h-5 animate-spin'/> : 
-          "Generate Trip"
+
+      {/* Form Container */}
+      <div className='relative z-10 w-full max-w-4xl px-4 sm:px-6 flex flex-col gap-16'>
+
+        {/* Section 1: Destination & Days */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-8 sm:p-12 rounded-[2.5rem] shadow-xl ring-1 ring-slate-900/5">
+            <div className='flex flex-col gap-4 group'>
+                <label className='text-xl font-bold text-slate-800 flex items-center gap-3'>
+                    <div className="p-2 bg-orange-100 rounded-xl text-orange-600">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    </div>
+                    Destination
+                </label>
+                <input 
+                    type="text" 
+                    placeholder="E.g. Santorini, Greece" 
+                    className='bg-slate-50 border border-slate-200 rounded-2xl p-5 text-xl font-medium text-slate-800 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 transition-all duration-300 placeholder:text-slate-400' 
+                    required 
+                    value={place}
+                    onChange={(e) => setPlace(e.target.value)} 
+                />
+            </div>
+
+            <div className='flex flex-col gap-4 group'>
+                <label className='text-xl font-bold text-slate-800 flex items-center gap-3'>
+                    <div className="p-2 bg-rose-100 rounded-xl text-rose-600">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    </div>
+                    Duration (Days)
+                </label>
+                <input 
+                    type="number" 
+                    placeholder="E.g. 5" 
+                    className='bg-slate-50 border border-slate-200 rounded-2xl p-5 text-xl font-medium text-slate-800 focus:outline-none focus:border-rose-500 focus:ring-4 focus:ring-rose-500/20 transition-all duration-300 placeholder:text-slate-400' 
+                    min={1} max={14} required 
+                    onChange={(e) => handleInputChange('days', e.target.value)} 
+                />
+            </div>
+        </div>
+
+        {/* Section 2: Budget */}
+        <div className='flex flex-col gap-8'>
+          <h2 className='text-2xl font-bold text-slate-900 flex items-center gap-3 px-2'>
+            What is your budget?
+          </h2>
+          <div className='grid grid-cols-1 sm:grid-cols-3 gap-6'>
+            {SelectBudgetOption.map((option) => (
+              <div key={option.id} 
+                className={`relative overflow-hidden flex flex-col p-8 rounded-[2rem] transition-all duration-500 cursor-pointer border ${formData.budget === option.title ? 'border-amber-500 bg-amber-50 shadow-[0_8px_30px_rgba(245,158,11,0.2)] scale-105 z-10' : 'border-slate-200 bg-white hover:border-amber-300 hover:shadow-lg hover:-translate-y-1'}`} 
+                onClick={() => handleInputChange('budget', option.title)}>
+                
+                <div className="relative z-10 flex flex-col items-start gap-3">
+                    <span className='text-5xl drop-shadow-sm pb-2'>{option.icon}</span>
+                    <h3 className='text-xl font-black text-slate-900'>{option.title}</h3>
+                    <p className='text-sm text-slate-500 font-medium leading-relaxed'>{option.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Section 3: Companions */}
+        <div className='flex flex-col gap-8'>
+          <h2 className='text-2xl font-bold text-slate-900 flex items-center gap-3 px-2'>
+            Who is traveling?
+          </h2>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
+            {SelectTravellerList.map((option) => (
+              <div key={option.id} 
+                className={`relative overflow-hidden flex flex-col p-8 rounded-[2rem] transition-all duration-500 cursor-pointer border ${formData.people === option.title ? 'border-rose-500 bg-rose-50 shadow-[0_8px_30px_rgba(244,63,94,0.2)] scale-105 z-10' : 'border-slate-200 bg-white hover:border-rose-300 hover:shadow-lg hover:-translate-y-1'}`}
+                onClick={() => handleInputChange('people', option.title)}>
+
+                <div className="relative z-10 flex flex-col items-start gap-3">
+                    <span className='text-5xl drop-shadow-sm pb-2'>{option.icon}</span>
+                    <h3 className='text-xl font-black text-slate-900'>{option.title}</h3>
+                    <p className='text-sm text-slate-500 font-medium leading-relaxed'>{option.people}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Generate Button */}
+        <div className='mt-8 flex items-center justify-center p-8 bg-white border border-slate-100 shadow-xl shadow-orange-900/5 rounded-[2.5rem] max-w-lg mx-auto w-full'>
+          <button 
+            className={`group relative overflow-hidden w-full px-12 py-5 text-xl font-extrabold rounded-2xl bg-orange-500 text-white transition-all duration-300 transform hover:scale-[1.02] shadow-[0_8px_30px_rgba(249,115,22,0.3)] hover:shadow-[0_12px_40px_rgba(249,115,22,0.5)] focus:outline-none focus:ring-4 focus:ring-orange-500/30`} 
+            onClick={handleSubmit}>
+            <span className="relative z-10 flex items-center justify-center gap-3 tracking-wide">
+                {loading ? <BiLoaderAlt className='w-7 h-7 animate-spin'/> : "GENERATE ITINERARY"}
+                {!loading && <svg className="w-6 h-6 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>}
+            </span>
+            <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[150%] skew-x-[-45deg] group-hover:animate-[shine_1.5s_ease-in-out]"></div>
+          </button>
+        </div>
+
+      </div>
+      <style jsx>{`
+        @keyframes shine {
+            100% { transform: translateX(150%) skewX(-45deg); }
         }
-        </Button>
-      </div>
+      `}</style>
     </div>
   )
 }
 
-export default page
+export default CreateTripPage;

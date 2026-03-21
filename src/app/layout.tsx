@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
+import BottomNav from "@/components/BottomNav";
+import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster"
 import { ClerkProvider } from "@clerk/nextjs";
 
@@ -23,8 +25,13 @@ export default function RootLayout({
       <body className={poppins.className}>
         <Toaster />
         <Header />
+        <BottomNav />
+        
+        <main className="flex-1 pt-20 pb-24 sm:pb-0">
+          {children}
+        </main>
 
-        {children}
+        <Footer />
       </body>
     </html>
     </ClerkProvider>

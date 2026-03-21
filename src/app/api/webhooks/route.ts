@@ -1,8 +1,8 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
 import { WebhookEvent } from '@clerk/nextjs/server'
-import { addDoc, collection } from 'firebase/firestore'
-import { db } from '@/lib/db'
+import connectToDatabase from '@/lib/mongoose';
+import User from '@/models/User';
 
 export async function POST(req: Request) {
 
@@ -56,9 +56,10 @@ export async function POST(req: Request) {
     console.log(`Webhook with and ID of ${id} and type of ${eventType}`)
     // console.log('Webhook body:', body)
     
-    const user = await addDoc(collection(db, 'users'), {
-        id
-    })
+    await connectToDatabase();
+    const user = await User.create({
+        clerkId: id
+    });
     console.log(user);
     
     // Respond with a 200
