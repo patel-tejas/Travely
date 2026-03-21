@@ -35,7 +35,7 @@ const MyTripsPage = async () => {
                     <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm text-center px-4">
                         <span className="text-6xl mb-6">🏜️</span>
                         <h3 className="text-2xl font-bold text-slate-900 mb-2">No trips planned yet</h3>
-                        <p className="text-slate-500 mb-8 max-w-md">You haven't generated any itineraries yet. Let our AI curate your first magical experience.</p>
+                        <p className="text-slate-500 mb-8 max-w-md">You haven&apos;t generated any itineraries yet. Let our AI curate your first magical experience.</p>
                         <Link href="/create-trip" className="bg-orange-50 text-orange-600 border border-orange-200 font-bold px-8 py-3 rounded-full hover:bg-orange-100 transition">Start Planning</Link>
                     </div>
                 ) : (

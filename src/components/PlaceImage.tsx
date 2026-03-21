@@ -32,7 +32,7 @@ export const PlaceImage = ({ query, className }: { query: string, className?: st
             fetchPhoto();
         }
         return () => { isMounted = false; };
-    }, [query]);
+    }, [query, toast]);
 
     return (
         <Image 

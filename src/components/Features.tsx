@@ -24,7 +24,7 @@ const Features = () => {
                     </div>
                     <h4 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Curated Hotel Selection</h4>
                     <p className="text-lg text-slate-500 mb-6 font-medium leading-relaxed">
-                        We don't just find a place to sleep; we find the perfect stay. Our AI parses through thousands of options to deliver top-rated, tailored accommodations that fit exactly within your budget.
+                        We don&apos;t just find a place to sleep; we find the perfect stay. Our AI parses through thousands of options to deliver top-rated, tailored accommodations that fit exactly within your budget.
                     </p>
                     <ul className="space-y-4">
                         <li className="flex items-start gap-3">
@@ -40,9 +40,11 @@ const Features = () => {
                 
                 <div className="w-full lg:w-1/2 relative">
                     <div className="absolute inset-0 bg-gradient-to-tr from-orange-200 to-rose-200 rounded-[2.5rem] transform rotate-3 -z-10 blur-sm"></div>
-                    <img 
+                    <Image 
                         src="/landing1.png" 
                         alt="Curated Accommodations" 
+                        width={600}
+                        height={400}
                         className="w-full h-auto rounded-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-slate-100 object-cover"
                     />
                 </div>
@@ -52,9 +54,11 @@ const Features = () => {
             <div className="flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20">
                 <div className="w-full lg:w-1/2 relative">
                     <div className="absolute inset-0 bg-gradient-to-tr from-rose-200 to-purple-200 rounded-[2.5rem] transform -rotate-3 -z-10 blur-sm"></div>
-                    <img 
+                    <Image 
                         src="/landing2.png" 
                         alt="Intelligent Daily Itineraries" 
+                        width={600}
+                        height={400}
                         className="w-full h-auto rounded-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-slate-100 object-cover"
                     />
                 </div>

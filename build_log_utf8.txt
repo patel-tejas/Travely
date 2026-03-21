@@ -1,0 +1,71 @@
+﻿
+> travel-planner@0.1.0 build
+> next build
+
+  Γû▓ Next.js 14.2.5
+
+   Creating an optimized production build ...
+node.exe : Failed to 
+compile.
+At C:\Program Files\no
+dejs\npm.ps1:29 char:3
++   & $NODE_EXE 
+$NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (Failed to    
+ compile.:String)     
+[], RemoteExcepti    
+on
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+
+./src/components/Place
+Image.tsx
+Module not found: 
+Can't resolve 
+'@/lib/action'
+
+https://nextjs.org/doc
+s/messages/module-not-
+found
+
+./src/components/Place
+Image.tsx
+Module not found: 
+Can't resolve '../../p
+ublic/travelBanner.jpg
+'
+
+https://nextjs.org/doc
+s/messages/module-not-
+found
+
+./src/components/Place
+Image.tsx
+Module not found: 
+Can't resolve '@/compo
+nents/ui/use-toast'
+
+https://nextjs.org/doc
+s/messages/module-not-
+found
+
+./src/app/my-trips/pag
+e.tsx
+Module not found: 
+Can't resolve 
+'@/lib/action'
+
+https://nextjs.org/doc
+s/messages/module-not-
+found
+
+
+> Build failed 
+because of webpack 
+errors
